@@ -60,9 +60,9 @@ class Recipe(object):
         extra_paths = []
         if self.extra_paths:
             for extra_path in self.extra_paths.split():
-                dir = os.path.dirname(extra_path)
-                for filename in os.listdir(dir):
-                    filename = os.path.join(dir, filename)
+                dir_ = os.path.dirname(extra_path)
+                for filename in os.listdir(dir_):
+                    filename = os.path.join(dir_, filename)
                     if fnmatch(filename, extra_path):
                         extra_paths.append(filename)
             sys.path.extend(extra_paths)
@@ -147,8 +147,11 @@ class Recipe(object):
 
         # patch sphinx-build script
         # change last line from sphinx.main() to sys.exit(sphinx.main())
-        # so that errors are correctly reported to Travis CI.        
-        sb = os.path.join(self.bin_dir, 'sphinx-build')
+        # so that errors are correctly reported to Travis CI.
+        sb = os.path.join(
+            self.bin_dir,
+            'sphinx-build-script.py' if os.name == 'nt' else 'sphinx-build'
+        )
         temp_file = StringIO()
         sb_file = open(sb,'r')
         for line in sb_file:
